@@ -107,14 +107,14 @@ test("firmware version guide explains Factory Reset in user-facing language", ()
   );
 
   for (const requiredConcept of [
-    "客户端切换版本",
+    "在客户端切换固件版本",
     "恢复出厂设置",
     "固件版本不会改变",
-    "操作前",
     "操作步骤",
-    "操作完成后",
-    "OTA 自动回滚",
-    "有线救援",
+    "重置后重新连接",
+    "固件包下载失败不会改写设备",
+    "USB 烧录已经开始",
+    "USB 有线救援",
   ]) {
     assert.match(
       guide,
@@ -128,7 +128,10 @@ test("firmware version guide explains Factory Reset in user-facing language", ()
     "firmware version does not change",
     "Before you start",
     "Steps",
-    "After the reset",
+    "Reconnect after the reset",
+    "A download failure does not modify the robot",
+    "USB flashing has started",
+    "USB wired recovery",
   ]) {
     assert.match(
       englishGuide,
@@ -162,6 +165,45 @@ test("firmware version guide explains Factory Reset in user-facing language", ()
       englishGuide,
       new RegExp(internalTerm, "i"),
       `internal implementation language leaked into English user docs: ${internalTerm}`,
+    );
+  }
+
+  for (const legacyConcept of [
+    "OTA",
+    "下载到设备中的 Application",
+    "重新下载 Application",
+  ]) {
+    assert.doesNotMatch(
+      guide,
+      new RegExp(legacyConcept),
+      `legacy firmware behavior leaked into user docs: ${legacyConcept}`,
+    );
+  }
+
+  for (const legacyConcept of [
+    "OTA",
+    "Applications downloaded to the robot",
+    "download Applications",
+  ]) {
+    assert.doesNotMatch(
+      englishGuide,
+      new RegExp(legacyConcept, "i"),
+      `legacy firmware behavior leaked into English user docs: ${legacyConcept}`,
+    );
+  }
+});
+
+test("public entry points do not advertise device-side OTA", () => {
+  for (const path of [
+    "docs/index.md",
+    "docs/troubleshooting/index.md",
+    "docs/en/index.md",
+    "docs/en/troubleshooting/index.md",
+  ]) {
+    assert.doesNotMatch(
+      readRepositoryFile(path),
+      /OTA/i,
+      `${path} still advertises unsupported device-side OTA`,
     );
   }
 });

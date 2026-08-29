@@ -19,7 +19,7 @@ features:
     link: /guide/client-and-device
     linkText: 查看连接指南
   - title: 固件维护
-    details: 理解客户端版本切换、数据清除、OTA 回滚与有线救援的职责边界。
+    details: 通过客户端和 USB 切换固件版本、清除设备数据，并在写入失败后重新烧录。
     link: /guide/firmware-version-management
     linkText: 查看版本管理
   - title: Application 开发

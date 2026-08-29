@@ -1,42 +1,44 @@
 # Firmware version management
 
-Switching firmware, performing a Factory Reset, and recovering a robot that cannot start solve different problems. Check your goal before choosing an action.
+Firmware switching, Factory Reset, and USB recovery solve different problems. Factory Reset does not change the firmware version. Use Watcher Desktop and a USB connection to upgrade or downgrade firmware.
 
-## Switch versions in the client
+## Switch firmware versions in the client
 
-Use client version management for upgrades and downgrades. The client lists the releases available for the connected robot. A release that is not listed may not be compatible with your device.
+Watcher Desktop downloads the selected firmware bundle to the computer and verifies it before writing anything to the robot over USB.
 
-Before switching versions:
+Before you start:
 
-- Keep the robot connected to stable power.
-- Do not disconnect it while a release is downloading or installing.
-- Back up anything you need to keep if the client says that data must be cleared.
+- Connect the robot to the computer over USB and keep it on stable power.
+- Select the correct robot, serial port, and firmware version in the client.
+- Close serial monitors or other programs that are using the same port.
+
+After starting, wait for the client to finish downloading and verifying the bundle, flashing it over USB, and restarting the robot. Do not disconnect USB or turn off the robot before the client reports completion.
+
+::: info A download failure does not modify the robot
+If downloading or verifying the bundle fails on the computer, USB flashing has not started. The robot continues to run its previous firmware version. Check the network connection and download the bundle again.
+:::
 
 ## Factory Reset
 
-Use Factory Reset when you want to:
-
-- Change Wi-Fi or set up the robot again.
-- Start again with default device settings.
-- Prepare the robot for another person.
+Use Factory Reset to remove network, pairing, and service connection information from the robot, or before giving the robot to another person.
 
 ::: warning The firmware version does not change
-Factory Reset clears device data. It does not downgrade the robot to the version it had when purchased and does not install different firmware. After restarting, the robot runs the same firmware version it had before the reset.
+Factory Reset does not install, upgrade, or downgrade firmware. After restarting, the robot runs the same firmware version it had before the reset.
 :::
 
-Factory Reset clears:
+Factory Reset clears or resets:
 
-- Saved Wi-Fi information.
-- Device settings and credentials stored on the robot.
-- Applications downloaded to the robot.
+- Saved Wi-Fi names, passwords, and connection settings.
+- Screen brightness and system volume, which return to the firmware defaults.
+- Client pairing information and the pairing secret. The robot must be paired with the client again.
+- Locally stored voice-service connection addresses, accounts, passwords, and access tokens.
+- The locally stored device identifier and internal runtime state. A new device identifier is generated during a later startup.
 
-Files on the SD card are not intentionally removed. Before transferring the robot, remove the SD card or check it separately for personal content.
+Factory Reset does not delete:
 
-### Before you start
-
-- Keep the Wi-Fi name and password you will use for setup.
-- Back up anything you need to keep.
-- Charge the robot or connect it to power.
+- The currently installed firmware.
+- Photos, recordings, or other files on the SD card.
+- Applications managed on the computer by Watcher Desktop and the SDK Daemon.
 
 ### Steps
 
@@ -45,25 +47,31 @@ Files on the SD card are not intentionally removed. Before transferring the robo
 3. Swipe as instructed on the screen to confirm.
 4. Wait for the robot to restart. Do not turn off the power before it finishes.
 
-### After the reset
+### Reconnect after the reset
 
-The robot returns to setup mode. Connect it to Wi-Fi again, reconnect it in the client, then download Applications and adjust device settings as needed.
+After the robot restarts, connect it to Wi-Fi and pair it again through Watcher Desktop. If you use a voice service, follow the client instructions to configure or activate it again. You can readjust screen brightness and system volume in the robot settings.
 
-## If an update fails
+## If firmware installation is interrupted
 
-Factory Reset cannot repair damaged firmware and cannot select another firmware version.
+Factory Reset cannot repair firmware that was not written completely. The correct action depends on when the interruption occurred:
 
-If the robot cannot start after an update, it may use automatic OTA rollback to return to the last working release. If it does not recover on its own, or you cannot open Settings, use USB wired recovery.
+| Interrupted stage | Was the robot modified? | What to do |
+| --- | --- | --- |
+| The client is downloading or verifying the firmware bundle | No | Check the network connection and download it again |
+| USB flashing has started | Some data may already have been written | Keep or reconnect USB and run the complete flash again |
+| The robot does not start after flashing | The firmware may be incomplete | Flash official firmware again in the client; if necessary, put the robot into USB download mode and retry |
 
-## Wired recovery
+USB flashing writes the bootloader, partition table, and main firmware. Disconnecting USB or losing power during this process may prevent the robot from starting. The robot is not guaranteed to restore its previous version automatically.
 
-If the robot cannot start normally or the client cannot connect to it, use USB and an official recovery bundle. Do not erase the whole device unless the official instructions explicitly require it.
+## USB wired recovery
+
+If the robot cannot start normally or the client cannot connect to it, keep it connected over USB and use the client to flash official firmware for that robot again. Do not erase the whole device unless the official instructions explicitly require it.
 
 ## Choose the right action
 
 | Your goal | Feature to use | Does the firmware version change? |
 | --- | --- | --- |
-| Upgrade or downgrade | Client version management | Yes |
-| Clear settings and set up again | Factory Reset | No |
-| Robot cannot start after an update | Automatic OTA rollback or USB wired recovery | Depends on the recovery method |
-| Robot cannot start at all | USB wired recovery | Determined by the selected official recovery bundle |
+| Upgrade or downgrade | Client USB firmware flashing | Yes |
+| Clear network, pairing, and local service configuration | Factory Reset | No |
+| Firmware bundle download failed | Download it again in the client | No |
+| USB flashing was interrupted or the robot cannot start | Run USB firmware flashing again | Determined by the firmware version you select |

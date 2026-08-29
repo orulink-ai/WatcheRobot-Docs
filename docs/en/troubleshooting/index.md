@@ -25,8 +25,9 @@ A connected client does not imply that an Application is running. Confirm that t
 
 - Keep the robot powered during all writes.
 - Record the failed stage, target version, and client logs.
-- Preserve the currently bootable slot after a normal OTA failure.
-- Use [wired recovery](../guide/firmware-version-management.md#wired-recovery) when the device cannot boot.
+- If the firmware bundle did not finish downloading or verification failed, check the network and download it again. The robot has not been modified at this stage.
+- If USB flashing has started, reconnect USB and run the complete flash again.
+- Use [USB wired recovery](../guide/firmware-version-management.md#usb-wired-recovery) when the robot cannot boot.
 
 ## Before reporting an issue
 
