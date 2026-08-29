@@ -100,7 +100,7 @@ test("each VitePress 2 locale owns its rendered navigation and sidebar", () => {
   );
 });
 
-test("firmware version guide separates version switching, factory reset, rollback and wired recovery", () => {
+test("firmware version guide explains Factory Reset in user-facing language", () => {
   const guide = readRepositoryFile("docs/guide/firmware-version-management.md");
   const englishGuide = readRepositoryFile(
     "docs/en/guide/firmware-version-management.md",
@@ -108,11 +108,11 @@ test("firmware version guide separates version switching, factory reset, rollbac
 
   for (const requiredConcept of [
     "客户端切换版本",
-    "嵌入式 Factory Reset",
-    "当前已经生效",
-    "不会回退固件版本",
-    "nvs_flash_erase",
-    "/spiffs/app_center",
+    "恢复出厂设置",
+    "固件版本不会改变",
+    "操作前",
+    "操作步骤",
+    "操作完成后",
     "OTA 自动回滚",
     "有线救援",
   ]) {
@@ -124,16 +124,44 @@ test("firmware version guide separates version switching, factory reset, rollbac
   }
 
   for (const requiredConcept of [
-    "Embedded Factory Reset",
-    "active in the current firmware",
-    "does not roll the firmware back",
-    "nvs_flash_erase",
-    "/spiffs/app_center",
+    "Factory Reset",
+    "firmware version does not change",
+    "Before you start",
+    "Steps",
+    "After the reset",
   ]) {
     assert.match(
       englishGuide,
       new RegExp(requiredConcept),
       `missing English concept: ${requiredConcept}`,
+    );
+  }
+
+  for (const internalTerm of [
+    "当前实现",
+    "建议保留",
+    "产品文案",
+    "nvs_flash_erase",
+    "/spiffs/app_center",
+  ]) {
+    assert.doesNotMatch(
+      guide,
+      new RegExp(internalTerm),
+      `internal implementation language leaked into user docs: ${internalTerm}`,
+    );
+  }
+
+  for (const internalTerm of [
+    "current implementation",
+    "should remain available",
+    "Product copy",
+    "nvs_flash_erase",
+    "/spiffs/app_center",
+  ]) {
+    assert.doesNotMatch(
+      englishGuide,
+      new RegExp(internalTerm, "i"),
+      `internal implementation language leaked into English user docs: ${internalTerm}`,
     );
   }
 });

@@ -1,49 +1,69 @@
 # Firmware version management
 
-WatcheRobot treats firmware switching, device-data reset, startup rollback, and device recovery as separate operations. This prevents a downgrade from silently deleting data and prevents a settings reset from being mistaken for restoration of a historical firmware image.
+Switching firmware, performing a Factory Reset, and recovering a robot that cannot start solve different problems. Check your goal before choosing an action.
 
-## Client-managed version switching
+## Switch versions in the client
 
-Use the client for normal upgrades and downgrades. Available releases, stability labels, and hardware compatibility are determined by the release catalog shown by the client.
+Use client version management for upgrades and downgrades. The client lists the releases available for the connected robot. A release that is not listed may not be compatible with your device.
 
-Before switching, keep power stable and confirm hardware, resource, and persistent-data compatibility. If the target version is not offered by the client, do not bypass validation and write an OTA slot manually.
+Before switching versions:
 
-## Embedded Factory Reset (current implementation)
+- Keep the robot connected to stable power.
+- Do not disconnect it while a release is downloading or installing.
+- Back up anything you need to keep if the client says that data must be cleared.
 
-::: warning Factory Reset is not a firmware downgrade
-**Factory Reset** in device settings resets data owned by the current firmware. It does not roll the firmware back and does not flash a bundled “factory version.” After restarting, the robot continues to run the same firmware version that was active before the reset.
+## Factory Reset
+
+Use Factory Reset when you want to:
+
+- Change Wi-Fi or set up the robot again.
+- Start again with default device settings.
+- Prepare the robot for another person.
+
+::: warning The firmware version does not change
+Factory Reset clears device data. It does not downgrade the robot to the version it had when purchased and does not install different firmware. After restarting, the robot runs the same firmware version it had before the reset.
 :::
 
-This path is active in the current firmware. After the user confirms the action by swiping on **Settings > Factory Reset**, the embedded software performs these steps:
+Factory Reset clears:
 
-| Current action | Effect |
-| --- | --- |
-| Disconnect Wi-Fi and clear its credentials | The robot must be provisioned again after restart |
-| Call `nvs_flash_erase()` | Erase settings and credentials stored in the default NVS partition |
-| Remove `/spiffs/app_center` | Delete Application packages downloaded to that directory |
-| Restart the robot | Boot again from the current OTA application partition |
+- Saved Wi-Fi information.
+- Device settings and credentials stored on the robot.
+- Applications downloaded to the robot.
 
-The current path does not intentionally erase the SD card or storage outside the default NVS partition and `/spiffs/app_center`. It must not be described as a full-chip erase. Before transferring ownership, separately review data written by a product release to any other partition or the SD card.
+Files on the SD card are not intentionally removed. Before transferring the robot, remove the SD card or check it separately for personal content.
 
-The embedded entry should remain available because offline devices, damaged Wi-Fi settings, and ownership transfers need a reprovisioning path that does not depend on the client. Product copy can gradually converge on “Reset device data (Factory Reset).” Normal upgrades and downgrades remain the responsibility of client version management.
+### Before you start
 
-## Automatic OTA rollback
+- Keep the Wi-Fi name and password you will use for setup.
+- Back up anything you need to keep.
+- Charge the robot or connect it to power.
 
-Automatic rollback handles a newly written firmware that cannot pass its startup health check. The Bootloader returns to the last confirmed OTA slot without requiring the user to reach the settings screen.
+### Steps
 
-Rollback is a reliability mechanism, not a user-requested downgrade.
+1. Open **Settings** on the robot.
+2. Select **Factory Reset**.
+3. Swipe as instructed on the screen to confirm.
+4. Wait for the robot to restart. Do not turn off the power before it finishes.
+
+### After the reset
+
+The robot returns to setup mode. Connect it to Wi-Fi again, reconnect it in the client, then download Applications and adjust device settings as needed.
+
+## If an update fails
+
+Factory Reset cannot repair damaged firmware and cannot select another firmware version.
+
+If the robot cannot start after an update, it may use automatic OTA rollback to return to the last working release. If it does not recover on its own, or you cannot open Settings, use USB wired recovery.
 
 ## Wired recovery
 
-Use USB and the official Daemon maintenance flow when the app cannot boot, both OTA slots are unavailable, or the client cannot establish a normal connection.
+If the robot cannot start normally or the client cannot connect to it, use USB and an official recovery bundle. Do not erase the whole device unless the official instructions explicitly require it.
 
-Use an official release bundle and validate the hardware model, partition table, and image digest. Do not add `erase-flash` unless a full erase is explicitly required.
+## Choose the right action
 
-## Responsibility map
-
-| Goal | Correct owner | Firmware result |
+| Your goal | Feature to use | Does the firmware version change? |
 | --- | --- | --- |
-| Normal upgrade or downgrade | Client version management | Switch to the selected compatible release |
-| Clear settings and provision again | Factory Reset in device settings | Keep the current firmware version |
-| New OTA fails to boot | Bootloader automatic rollback | Return to the last confirmed OTA slot |
-| Device cannot boot normally | USB wired recovery | Write the selected official recovery bundle |
+| Upgrade or downgrade | Client version management | Yes |
+| Clear settings and set up again | Factory Reset | No |
+| Robot cannot start after an update | Automatic OTA rollback or USB wired recovery | Depends on the recovery method |
+| Robot cannot start at all | USB wired recovery | Determined by the selected official recovery bundle |
