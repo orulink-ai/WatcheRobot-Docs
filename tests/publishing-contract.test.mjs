@@ -11,12 +11,14 @@ test("GitHub Pages workflow tests and builds before deployment", () => {
   const workflow = readRepositoryFile(".github/workflows/deploy-pages.yml");
 
   for (const requiredStep of [
+    "actions/checkout@v7",
+    "actions/setup-node@v7",
     "npm ci",
     "npm test",
     "npm run docs:build",
-    "actions/configure-pages@v5",
-    "actions/upload-pages-artifact@v3",
-    "actions/deploy-pages@v4",
+    "actions/configure-pages@v6",
+    "actions/upload-pages-artifact@v5",
+    "actions/deploy-pages@v5",
   ]) {
     assert.match(
       workflow,
