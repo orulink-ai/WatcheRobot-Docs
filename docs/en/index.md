@@ -19,7 +19,7 @@ features:
     link: /en/guide/client-and-device
     linkText: Connection guide
   - title: Maintain firmware
-    details: Separate client-managed version switching, data reset, OTA rollback, and wired recovery.
+    details: Switch firmware over USB, clear device data, and recover from an interrupted flash in the client.
     link: /en/guide/firmware-version-management
     linkText: Firmware guide
   - title: Build Applications

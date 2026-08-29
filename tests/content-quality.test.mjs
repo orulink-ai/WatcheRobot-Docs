@@ -7,6 +7,7 @@ import {
   docsRoot,
   listMarkdownFiles,
   markdownLinks,
+  readRepositoryFile,
   resolveMarkdownTarget,
 } from "./helpers.mjs";
 
@@ -71,4 +72,31 @@ test("public pages do not contain unfinished placeholders", () => {
   }
 
   assert.deepEqual(failures, []);
+});
+
+test("firmware guides describe only the supported USB maintenance flow", () => {
+  const chinese = readRepositoryFile(
+    "docs/guide/firmware-version-management.md",
+  );
+  const english = readRepositoryFile(
+    "docs/en/guide/firmware-version-management.md",
+  );
+
+  assert.match(chinese, /屏幕亮度/);
+  assert.match(chinese, /系统音量/);
+  assert.match(chinese, /配对密钥/);
+  assert.match(chinese, /USB 烧录已经开始/);
+  assert.match(chinese, /不会改写设备/);
+  assert.doesNotMatch(chinese, /OTA/);
+  assert.doesNotMatch(chinese, /下载到设备中的 Application/);
+  assert.doesNotMatch(chinese, /重新下载 Application/);
+
+  assert.match(english, /screen brightness/i);
+  assert.match(english, /system volume/i);
+  assert.match(english, /pairing secret/i);
+  assert.match(english, /USB flashing has started/i);
+  assert.match(english, /does not modify the robot/i);
+  assert.doesNotMatch(english, /OTA/);
+  assert.doesNotMatch(english, /Applications downloaded to the robot/i);
+  assert.doesNotMatch(english, /download Applications/i);
 });
