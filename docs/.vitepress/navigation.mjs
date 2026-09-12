@@ -17,6 +17,10 @@ export const siteNavigation = {
               text: "固件版本管理",
               link: "/guide/firmware-version-management",
             },
+            {
+              text: "树莓派真机 CI",
+              link: "/guide/hardware-in-the-loop",
+            },
           ],
         },
       ],
@@ -51,6 +55,10 @@ export const siteNavigation = {
             {
               text: "Firmware versions",
               link: "/en/guide/firmware-version-management",
+            },
+            {
+              text: "Hardware-in-the-loop",
+              link: "/en/guide/hardware-in-the-loop",
             },
           ],
         },
